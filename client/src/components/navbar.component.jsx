@@ -34,7 +34,7 @@ const Navbar = () => {
                         <p>Write</p>
                     </Link>
 
-                    <Link to="/signin" className="btn-light py-2">
+                    <Link to="/login" className="btn-light py-2">
                         Sign In
                     </Link>
 
