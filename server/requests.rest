@@ -1,0 +1,8 @@
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "fullname": "Dev",
+  "email": "mikae@proton.co",
+  "password": "Budapest@2067"
+}
