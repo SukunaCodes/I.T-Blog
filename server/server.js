@@ -4,6 +4,7 @@ import {Sequelize} from 'sequelize';
 import bcrypt from 'bcrypt';
 
 import User from "./Schema/User.js";
+import {nanoid} from "nanoid";
 
 const server = express();
 let PORT = process.env.SERVER_PORT;
@@ -40,16 +41,29 @@ async function testDBConnection() {
 (async () => {
     await testDBConnection();
     await sequelize.sync({force: true});
-    console.log('Postgres DB synced!')// Wait for DB connection
+    console.log('Postgres DB synced!')// At this point the DB is connected.
 })();
 
 server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
 })
 
+const formatDataToSend = (user) => {
+    return {
+        fullname: user.fullname,
+        username: user.username,
+        profile_img: user.profile_img
+    }
+}
 
-const generateUsername = async (email) =>{
 
+const generateUsername = async (email) => {
+    let username = email.split('@')[0];
+    let isUsernameExist = await User.findOne({ where: { username } })
+
+    isUsernameExist ? username += nanoid().substring(0, 4) : "";
+
+    return username;
 }
 
 server.post("/signup", async (req, res) => {
@@ -71,7 +85,7 @@ server.post("/signup", async (req, res) => {
 
     // Hashing the password
     const hashed_password = await bcrypt.hash(password, 10);
-    let username = email.split('@')[0];
+    let username = await generateUsername(email);
 
     // User Creation
     try {
@@ -81,15 +95,15 @@ server.post("/signup", async (req, res) => {
             password: hashed_password,
             username,
         });
-        return res.status(200).json({user})
-    } catch (error){
-        if (error.name === "SequelizeUniqueConstraintError"){
+        return res.status(200).json(formatDataToSend(user))
+    } catch (error) {
+        if (error.name === "SequelizeUniqueConstraintError") {
             // Handle Unique constraint errors (duplicate emails)
             return res.status(400).json({error: "Email already exists!"})
         }
         // Log other errors for debugging
         console.error('Error during signup:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({error: 'Internal server error'});
     }
     /*return res.status(200).json({"status": "👍👍"})*/
 });
