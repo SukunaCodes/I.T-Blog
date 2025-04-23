@@ -2,9 +2,10 @@ import express from 'express';
 import 'dotenv/config'
 import {Sequelize} from 'sequelize';
 import bcrypt from 'bcrypt';
+import {nanoid} from "nanoid";
+import jwt from 'jsonwebtoken';
 
 import User from "./Schema/User.js";
-import {nanoid} from "nanoid";
 
 const server = express();
 let PORT = process.env.SERVER_PORT;
@@ -49,7 +50,11 @@ server.listen(PORT, () => {
 })
 
 const formatDataToSend = (user) => {
+
+    const access_token = jwt.sign({id: user.id}, process.env.SECRET_ACCESS_KEY)
+
     return {
+        access_token,
         fullname: user.fullname,
         username: user.username,
         profile_img: user.profile_img
@@ -98,7 +103,7 @@ server.post("/signup", async (req, res) => {
         return res.status(200).json(formatDataToSend(user))
     } catch (error) {
         if (error.name === "SequelizeUniqueConstraintError") {
-            // Handle Unique constraint errors (duplicate emails)
+            // Handle Unique constraint error (duplicate emails)
             return res.status(400).json({error: "Email already exists!"})
         }
         // Log other errors for debugging
