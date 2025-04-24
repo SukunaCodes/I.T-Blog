@@ -6,11 +6,11 @@ import User from "../Schema/User.js";
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 
-/*User Registration*/
+/* User Registration Function */
 export const register = async (req, res) => {
     const {fullname, email, password} = req.body;
 
-    // Data validation from client frontend
+    // Data validation
     if (fullname.length < 3) {
         return res.status(403).json({"error": "Fullname must be at least 3 characters long"})
     }
@@ -45,5 +45,40 @@ export const register = async (req, res) => {
         // Log other errors for debugging
         console.error('Error during signup:', error);
         return res.status(500).json({error: 'Internal server error'});
+    }
+}
+
+/* User Login Function */
+export const login = async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const normalizedEmail = email.toLowerCase();
+        console.log("Querying email -->", normalizedEmail);
+        // Find user by email
+        const user = await User.findOne({where: {email: normalizedEmail}})
+
+        // Check if user exists
+        if (!user) {
+            return res.status(403).json({error: "Email not found!"});
+        }
+        console.log(JSON.stringify(user, null, 2));
+
+        // Verifying password
+        await bcrypt.compare(password, user.password, (err, result) => {
+            if (err){
+                return res.status(403).json({error: "Error occurred while attempting to login. Please try again later."})
+            }
+            if (!result){
+                return res.status(403).json({error: "Incorrect Password!"})
+            } else{
+                return res.status(200).json({
+                    status: 'Login successful!',
+                    ...formatDataToSend(user),
+                });
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({error: "An unexpected error has occurred."});
     }
 }
