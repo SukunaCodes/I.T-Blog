@@ -1,7 +1,7 @@
 import {Sequelize, DataTypes} from 'sequelize';
 import 'dotenv/config'
 
-
+// Initialize sequelize
 const sequelize = new Sequelize({
     dialect: 'postgres',
     host: process.env.DB_HOST,
@@ -106,4 +106,3 @@ const User = sequelize.define('user', {
     },*/
 }, {timestamps: false},);
 export default User;
-
