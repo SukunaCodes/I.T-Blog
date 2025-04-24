@@ -1,20 +1,19 @@
 import express from 'express';
 import 'dotenv/config'
 import {Sequelize} from 'sequelize';
-import bcrypt from 'bcrypt';
-import {nanoid} from "nanoid";
-import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import userAuthRoutes from "./Routes/userAuthRoutes.js";
 
-import User from "./Schema/User.js";
+
 
 const server = express();
 let PORT = process.env.SERVER_PORT;
 
-let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
-let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 
 // Middleware
 server.use(express.json());
+server.use(express.urlencoded({extended: false}));
+server.use(cookieParser());
 
 // Connecting to Postgres Database
 const sequelize = new Sequelize({
@@ -49,66 +48,7 @@ server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
 })
 
-const formatDataToSend = (user) => {
-
-    const access_token = jwt.sign({id: user.id}, process.env.SECRET_ACCESS_KEY)
-
-    return {
-        access_token,
-        fullname: user.fullname,
-        username: user.username,
-        profile_img: user.profile_img
-    }
-}
+// Routes
+server.use('/auth', userAuthRoutes);
 
 
-const generateUsername = async (email) => {
-    let username = email.split('@')[0];
-    let isUsernameExist = await User.findOne({ where: { username } })
-
-    isUsernameExist ? username += nanoid().substring(0, 4) : "";
-
-    return username;
-}
-
-server.post("/signup", async (req, res) => {
-    const {fullname, email, password} = req.body;
-
-    // Data validation from client frontend
-    if (fullname.length < 3) {
-        return res.status(403).json({"error": "Fullname must be at least 3 characters long"})
-    }
-    if (!email.length) {
-        res.status(403).json({"error": "Please provide an email"})
-    }
-    if (!emailRegex.test(email)) {
-        return res.status(403).json({"error": "Invalid email"})
-    }
-    if (!passwordRegex.test(password)) {
-        return res.status(403).json({"error": "Password should be 6 to 20 characters long with 1 numeric, 1 lowercase, 1 Uppercase letters"})
-    }
-
-    // Hashing the password
-    const hashed_password = await bcrypt.hash(password, 10);
-    let username = await generateUsername(email);
-
-    // User Creation
-    try {
-        const user = await User.create({
-            fullname,
-            email,
-            password: hashed_password,
-            username,
-        });
-        return res.status(200).json(formatDataToSend(user))
-    } catch (error) {
-        if (error.name === "SequelizeUniqueConstraintError") {
-            // Handle Unique constraint error (duplicate emails)
-            return res.status(400).json({error: "Email already exists!"})
-        }
-        // Log other errors for debugging
-        console.error('Error during signup:', error);
-        return res.status(500).json({error: 'Internal server error'});
-    }
-    /*return res.status(200).json({"status": "👍👍"})*/
-});
