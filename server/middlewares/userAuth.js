@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from "../Schema/User.js";
+import User from "../models/User.js";
 import {nanoid} from "nanoid";
 
 // Function to check on existing usernames in the Database and generate one if exists
