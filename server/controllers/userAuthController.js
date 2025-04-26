@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import {formatDataToSend, generateUsername} from "../Middlewares/userAuth.js";
-import User from "../Schema/User.js";
+import {formatDataToSend, generateUsername} from "../middlewares/userAuth.js";
+import User from "../models/User.js";
 
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
@@ -15,7 +15,7 @@ export const register = async (req, res) => {
         return res.status(403).json({"error": "Fullname must be at least 3 characters long"})
     }
     if (!email.length) {
-        res.status(403).json({"error": "Please provide an email"})
+        return res.status(403).json({"error": "Please provide an email"})
     }
     if (!emailRegex.test(email)) {
         return res.status(403).json({"error": "Invalid email"})
