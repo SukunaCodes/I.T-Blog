@@ -1,15 +1,19 @@
-import {DataTypes} from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import 'dotenv/config'
-import initializeDatabase from "../Config/database.js";
+import sequelize from "../config/database.js";
 
-// Initialize sequelize
-const db = initializeDatabase();
 
 
 const profile_imgs_name_list = ["Aizen", "Ayanakoji", "Ichigo", "Sun-Jin-Woo", "Urahara", "Sukuna", "Dante", "Byakuya", "Rukia"];
 const profile_imgs_collections_list = ["notionists-neutral", "adventurer-villain", "fun-isekai", "overpowered-shounen", "raging-vessel", "dark-manipulator"];
 
-const User = db.define('user', {
+const User = sequelize.define('user', {
+    id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+    },
     fullname: {
         type: DataTypes.STRING,
         required: true,
@@ -56,15 +60,39 @@ const User = db.define('user', {
     },
     social_links: {
         type: DataTypes.JSONB,
+        allowNull: true,
         defaultValue: [
-            { platform: 'youtube', url: '' },
-            { platform: 'instagram', url: '' },
-            { platform: 'x', url: '' },
-            { platform: 'substack', url: '' },
-            { platform: 'github', url: '' },
-            { platform: 'medium', url: '' },
-            { platform: 'website', url: '' },
+            {platform: 'youtube', url: ''},
+            {platform: 'instagram', url: ''},
+            {platform: 'x', url: ''},
+            {platform: 'substack', url: ''},
+            {platform: 'github', url: ''},
+            {platform: 'medium', url: ''},
+            {platform: 'website', url: ''},
         ]
     },
-}, {timestamps: false},);
+    account_details: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+        defaultValue: {
+            total_posts: 0,
+            total_reads: 0,
+        },
+    },
+    // Google Auth
+    google_auth: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+    },
+    updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+    },
+}, {timestamps: true},);
 export default User;
