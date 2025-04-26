@@ -1,8 +1,8 @@
 import express from 'express';
 import 'dotenv/config'
 import cookieParser from 'cookie-parser';
-import userAuthRoutes from "./Routes/userAuthRoutes.js";
-import initializeDatabase from "./Config/database.js";
+import userAuthRoutes from "./routes/userAuthRoutes.js";
+import sequelize from "./config/database.js";
 
 
 
@@ -15,14 +15,12 @@ server.use(express.json());
 server.use(express.urlencoded({extended: false}));
 server.use(cookieParser());
 
-// Connecting to Postgres Database
-const db = initializeDatabase();
 
 
 // Testing Postgresql Connection
 async function testDBConnection() {
     try {
-        await db.authenticate();
+        await sequelize.authenticate();
         console.log('PostgresSQL connection has been established successfully!');
     } catch (e) {
         console.error('Unable to connect to the PostgresSQL database: ', e);
@@ -33,15 +31,15 @@ async function testDBConnection() {
 // Initialize the DB connection function
 (async () => {
     await testDBConnection();
-    await db.sync({force: true});
-    console.log('Postgres DB synced!')// At this point the DB is connected.
+    /*await db.sync({force: true});
+    console.log('Postgres DB synced!')*/// At this point the DB is connected.
 })();
 
 server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
 })
 
-// Routes
+// routes
 server.use('/auth', userAuthRoutes);
 
 
