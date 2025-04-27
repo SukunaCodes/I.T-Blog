@@ -10,6 +10,7 @@ const App = () => {
 
     const [userAuth, setUserAuth] = useState({});
 
+    // Use sessions to keep users logged in
     useEffect(() => {
         let userSession = lookInSession("user");
         userSession ? setUserAuth(JSON.parse(userSession)) : setUserAuth({access_token: null})
