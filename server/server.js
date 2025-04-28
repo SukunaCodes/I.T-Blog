@@ -3,17 +3,26 @@ import 'dotenv/config'
 import cookieParser from 'cookie-parser';
 import userAuthRoutes from "./routes/userAuthRoutes.js";
 import sequelize from "./config/database.js";
-
+import cors from "cors";
+import googleAccountKey from './pern-blog-app-firebase-adminsdk.json' with { type: "json" }; // Guard the json securely
+import admin from "firebase-admin";
 
 
 const server = express();
 let PORT = process.env.SERVER_PORT;
+
+// Firebase admin Init
+
+admin.initializeApp({
+    credential: admin.credential.cert(googleAccountKey)
+});
 
 
 // Middleware
 server.use(express.json());
 server.use(express.urlencoded({extended: false}));
 server.use(cookieParser());
+server.use(cors());
 
 
 
@@ -39,7 +48,7 @@ server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
 })
 
-// routes
+// User Auth Routes
 server.use('/auth', userAuthRoutes);
 
 

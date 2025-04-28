@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from "../models/User.js";
 import {nanoid} from "nanoid";
 
+
 // Function to check on existing usernames in the Database and generate one if exists
 export const generateUsername = async (email) => {
     let username = email.split('@')[0];
@@ -21,6 +22,7 @@ export const formatDataToSend = (user) => {
         profile_img: user.profile_img
     }
 }
+
 
 /*
 export const verifyToken = (req, res, next) => {
