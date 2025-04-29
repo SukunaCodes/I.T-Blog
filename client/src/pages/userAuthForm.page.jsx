@@ -5,26 +5,31 @@ import AnimationWrapper from "../common/page-animation.jsx";
 import {Toaster, toast} from "react-hot-toast";
 import axios from "axios";
 import {storeSession} from "../common/session.jsx";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {UserContext} from "../App.jsx";
+import {googleAuth} from "../common/firebase.jsx";
 
 const UserAuthForm = ({type}) => {
 
-    let {userAuth: {access_token}, setUserAuth} = useContext(UserContext)
+    let {userAuth: {access_token}, setUserAuth} = useContext(UserContext);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
     console.log(access_token);
 
     // Function to make Requests to the Backend Server
-    const userAuthServerConnection = (serverRoute, currentFormData) => {
+    const userAuthPostServerConnection = (serverRoute, currentFormData) => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, currentFormData)
             .then(({ data }) => {
                 storeSession("user", JSON.stringify(data))
                 setUserAuth(data)
             })
             .catch(({response}) => {
-                toast.error(response.data.error)
-            })
+                toast.error(response.data.error);
+                throw response.data.error;
+            });
     }
+
+
 
     const handleSubmit = (e) => {
         //Prevent null submissions
@@ -62,24 +67,29 @@ const UserAuthForm = ({type}) => {
         }
         console.log(currentFormData);
 
-        userAuthServerConnection(serverRoute, currentFormData);
+        userAuthPostServerConnection(serverRoute, currentFormData);
 
     }
 
-    /*// Google
-    const handleGoogleAuth = (e) => {
+    // Google Authentication
+    const handleGoogleAuth = async (e) => {
         e.preventDefault();
-        authWithGoogle().then(user => {
-            let serverRoute = "/auth/google";
-            let currentFormData = {
-                access_token: user.access_token
-            }
-        })
-            .catch(err => {
-                toast.error('Trouble login through Google');
-                return console.log(err);
+        setIsGoogleLoading(true);
+        try{
+            await googleAuth().then(user => {
+                console.log(user);
+                let serverRoute = '/auth/google-auth';
+                let currentFormData = {
+                    access_token: user.accessToken
+                }
+                userAuthPostServerConnection(serverRoute, currentFormData);
             })
-    }*/
+        } catch (e){
+            setIsGoogleLoading(false);
+            toast.error('Google Authentication Error!')
+            return console.log(e);
+        }
+    }
 
     return (
         access_token ? <Navigate to="/" /> :
@@ -126,9 +136,9 @@ const UserAuthForm = ({type}) => {
                             <hr className="w-1/2 border-black"/>
                         </div>
 
-                        <button className="btn-dark flex items-center justify-center gap-4 w-[70%] center">
+                        <button className="btn-dark flex items-center justify-center gap-4 w-[70%] center" onClick={handleGoogleAuth} disabled={isGoogleLoading}>
                             <img src={googleIcon} className="w-5" alt="google icon"/>
-                            Continue with Google
+                            {isGoogleLoading ? 'Loading..Please Wait!' : 'Continue with Google'}
                         </button>
 
                         {
