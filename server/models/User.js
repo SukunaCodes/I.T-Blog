@@ -3,8 +3,7 @@ import 'dotenv/config'
 import sequelize from "../config/database.js";
 
 
-
-const profile_imgs_name_list = ["Aizen", "Ayanakoji", "Ichigo", "Sun-Jin-Woo", "Urahara", "Sukuna", "Dante", "Byakuya", "Rukia"];
+const profile_imgs_name_list = ["Aizen", "Ayanakoji", "Ichigo", "Urahara", "Sukuna", "Dante", "Byakuya", "Rukia"];
 const profile_imgs_collections_list = ["notionists-neutral", "adventurer-villain", "fun-isekai", "overpowered-shounen", "raging-vessel", "dark-manipulator"];
 
 const User = sequelize.define('user', {
@@ -95,4 +94,13 @@ const User = sequelize.define('user', {
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
     },
 }, {timestamps: true},);
+
+/*// Define Blog associations outside sequelize.define
+User.associate = (models) => {
+    User.hasMany(models.Blog, {
+        foreignKey: 'userId',
+        as: 'blogs',
+    });
+}*/
+
 export default User;

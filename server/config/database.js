@@ -16,7 +16,7 @@ import UserModel from '../models/User.js';
 
 // Initialize models
 const models = {
-  User: UserModel(sequelize),
+  User: UserModel,
 };
 
 // Set up associations

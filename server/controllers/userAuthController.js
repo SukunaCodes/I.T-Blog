@@ -104,7 +104,7 @@ export const googleAuthentication = async (req, res) => {
         // Search for user by email, attr: [specific fields]
         let user = await User.findOne({
             where: {email: normalizedEmail},
-            attributes: ['fullname', 'username', 'profile_img', 'google_auth'],
+            attributes: ['id', 'fullname', 'username', 'profile_img', 'google_auth'],
         });
 
         // If no user found, Create a new one
@@ -121,13 +121,22 @@ export const googleAuthentication = async (req, res) => {
             // Fetch the newly created user with selected fields
             user = await User.findOne({
                 where: {email: normalizedEmail},
-                attributes: ['fullname', 'username', 'profile_img', 'google_auth'],
+                attributes: ['id', 'fullname', 'username', 'profile_img', 'google_auth'],
+            });
+        } else {
+            // Update existing user's profile_img and google_auth
+            await user.update({
+                profile_img: picture,
+                google_auth: true,
+            });
+
+            // Re-fetch user to ensure updated fields are included
+            user = await User.findOne({
+                where: {email: normalizedEmail},
+                attributes: ['id', 'fullname', 'username', 'profile_img', 'google_auth'],
             });
         }
-        // Update google_auth: true if not set
-        if (!user.google_auth) {
-            await user.update({google_auth: true});
-        }
+
         console.log('User ->', user.toJSON());
 
         // Return user data
