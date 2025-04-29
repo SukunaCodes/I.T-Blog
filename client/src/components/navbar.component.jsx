@@ -62,7 +62,7 @@ const Navbar = () => {
 
                                 <div className="relative" onClick={handleUserNavPanel} onBlur={handleBlur}>
                                     <button className="w-12 h-12 mt-1">
-                                        <img src={profile_img} alt="user profile image" className="w-full h-full object-cover rounded-full"/>
+                                        <img src={profile_img} alt="user profile image" className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer"/>
                                     </button>
 
                                     {
