@@ -6,6 +6,7 @@ import sequelize from "./config/database.js";
 import cors from "cors";
 import googleAccountKey from './pern-blog-app-firebase-adminsdk.json' with { type: "json" }; // Guard the json securely
 import admin from "firebase-admin";
+import blogEditorRoutes from "./routes/blogEditorRoutes.js";
 
 
 const server = express();
@@ -50,5 +51,8 @@ server.listen(PORT, () => {
 
 // User Auth Routes
 server.use('/auth', userAuthRoutes);
+
+// Blog Editor Routes
+server.use('/upload', blogEditorRoutes);
 
 
