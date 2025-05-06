@@ -7,6 +7,7 @@ import {useContext, useEffect} from "react";
 import {Toaster, toast} from "react-hot-toast";
 import {EditorContext} from "../pages/editor.pages.jsx";
 import EditorJS from "@editorjs/editorjs";
+import {tools} from "./tools.component.jsx";
 
 const BlogEditor = () => {
 
@@ -16,9 +17,10 @@ const BlogEditor = () => {
     //UseEffect to lad EditorJS
     useEffect(() => {
         const editor = new EditorJS({
-            holderId: "textEditor",
+            holder: "textEditor",
             data: '',
-            placeholder: "Let\'s start your creative writing journey"
+            tools: tools,
+            placeholder: "Let\'s start the creative writing journey"
         })
     }, []);
 
