@@ -12,16 +12,16 @@ import {tools} from "./tools.component.jsx";
 const BlogEditor = () => {
 
 
-    const {blog, blog: {title, banner, content, tags, description}, setBlog} = useContext(EditorContext)
+    const {blog, blog: {title, banner, content, tags, description}, setBlog, textEditor, setTextEditor, setEditorState} = useContext(EditorContext)
 
     //UseEffect to lad EditorJS
     useEffect(() => {
-        const editor = new EditorJS({
+        setTextEditor(new EditorJS({
             holder: "textEditor",
             data: '',
             tools: tools,
             placeholder: "Let\'s start the creative writing journey"
-        })
+        }))
     }, []);
 
 
@@ -68,6 +68,30 @@ const BlogEditor = () => {
         setBlog({...blog, banner: defaultBanner})
     }
 
+    // Publish onClick Event
+    const handleBlogPublishEvent = () => {
+        if (banner === defaultBanner){
+            return toast.error('Please upload a banner to publish a blog!')
+        }
+        if (!title.length){
+            return toast.error('Blog Title is Recommended!')
+        }
+        if (textEditor.isReady){
+            textEditor.save().then(data => {
+                if (data.blocks.length){
+                    setBlog({...blog, content: data});
+                    setEditorState("publish")
+                } else{
+                    return toast.error('Please write something before publishing!')
+                }
+            })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+    }
+
+
     return (
 
         <>
@@ -77,7 +101,7 @@ const BlogEditor = () => {
                 </Link>
                 <p className="max-md:hidden text-black line-clamp-1 w-full">{title.length ? title : "Untitled Blog"}</p>
                 <div className="flex gap-4 ml-auto">
-                    <button className="btn-dark py-2">
+                    <button className="btn-dark py-2" onClick={handleBlogPublishEvent}>
                         Publish
                     </button>
 
