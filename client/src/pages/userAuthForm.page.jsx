@@ -138,7 +138,14 @@ const UserAuthForm = ({type}) => {
 
                         <button className="btn-dark flex items-center justify-center gap-4 w-[70%] center" onClick={handleGoogleAuth} disabled={isGoogleLoading}>
                             <img src={googleIcon} className="w-5" alt="google icon"/>
-                            {isGoogleLoading ? 'Loading..Please Wait!' : 'Continue with Google'}
+                            {isGoogleLoading ? (
+                                <>
+                                    Loading
+                                    <span className="spinner"></span>
+                                </>
+                            ) : (
+                                "Continue with Google"
+                            )}
                         </button>
 
                         {
