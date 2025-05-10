@@ -47,12 +47,12 @@ async function testDBConnection() {
 
 server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
-})
+});
 
 // User Auth Routes
 server.use('/auth', userAuthRoutes);
 
 // Blog Editor Routes
-server.use('/upload', blogEditorRoutes);
+server.use('/blog', blogEditorRoutes);
 
 
