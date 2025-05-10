@@ -23,7 +23,13 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "firebase-admin": "^13.2.0",
+    "got": "^14.4.7",
     "jsonwebtoken": "^9.0.2",
+    "link-preview-js": "^3.0.14",
+    "metascraper": "^5.46.11",
+    "metascraper-description": "^5.46.11",
+    "metascraper-image": "^5.46.11",
+    "metascraper-title": "^5.46.11",
     "nanoid": "^5.1.5",
     "pg": "^8.15.6",
     "sequelize": "^6.37.7"
