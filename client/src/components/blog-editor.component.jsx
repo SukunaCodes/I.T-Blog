@@ -18,7 +18,7 @@ const BlogEditor = () => {
     useEffect(() => {
         setTextEditor(new EditorJS({
             holder: "textEditor",
-            data: '',
+            data: content,
             tools: tools,
             placeholder: "Let\'s start the creative writing journey"
         }))
@@ -71,7 +71,7 @@ const BlogEditor = () => {
     // Publish onClick Event
     const handleBlogPublishEvent = () => {
         if (banner === defaultBanner){
-            return toast.error('Please upload a banner to publish a blog!')
+            return toast.error('Please upload a banner!')
         }
         if (!title.length){
             return toast.error('Blog Title is Recommended!')
@@ -122,6 +122,7 @@ const BlogEditor = () => {
                             </label>
                         </div>
                         <textarea
+                            defaultValue={title}
                             placeholder="Blog Title"
                             className="text-4xl font-medtium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40" onKeyDown={handleBlogTitleKeyDown}
                             onChange={handleBlogTitleChange}
