@@ -25,17 +25,25 @@ const PublishForm = () => {
         }
     }
 
+    const handleBlogDescriptionChange = (e) => {
+        let input = e.target;
+        setBlog({...blog, description: input.value})
+    }
+
+
+
     const handleBlogTagsKeyDown = (e) => {
         if(e.keyCode === 13 || e.keyCode ===188){
             e.preventDefault();
             let tag = e.target.value;
             if(tags.length < tagLimit){
-                if(!tags.include(tag) && tag.length){
+                if(!tags.includes(tag) && tag.length){
                     setBlog({...blog, tags: [...tags, tag]})
                 }
             } else {
                 toast.error(`Max of ${tagLimit} tags required!`)
             }
+            e.target.value = "";
         }
     }
 
@@ -45,7 +53,7 @@ const PublishForm = () => {
             <section className= "w-screen min-h-screen grid items-center lg:grid-cols-2 py-16 lg:gap-4">
                 <Toaster />
                 <button className="w-12 h-12 absolute right-[5vw] z-10 top-[5%] lg:top-[10%]" onClick={handleCloseEvent}>
-                    <i className="fi fi-rr-cross"></i>
+                    <i className="fi fi-br-cross"></i>
                 </button>
 
                 <div className="max-w-[550px] center">
@@ -60,11 +68,11 @@ const PublishForm = () => {
                     <div className="border-grey lg:border-1 lg:pl-8">
                         <p className="text-dark-grey mb-2 mt-9">Blog Title</p>
                         <input type="text" placeholder="Blog Title" defaultValue={title} className="input-box pl-4"
-                               onChange={handlePublishBlogTitle} onKeyDown={handleBlogDescriptionKeyDown}/>
+                               onChange={handlePublishBlogTitle}/>
 
                         <p className="text-dark-grey mb-2 mt-9">Blog Description</p>
                         <textarea maxLength={characterLimit} defaultValue={description}
-                                  className="h-40 resize-none leading-7 input-box pl-4"></textarea>
+                                  className="h-40 resize-none leading-7 input-box pl-4" onChange={handleBlogDescriptionChange} onKeyDown={handleBlogDescriptionKeyDown}></textarea>
                         <p className="mt-1 text-dark-grey text-sm text-right">{characterLimit - description.length} characters
                             left.</p>
 

@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const uploadImageToAWS = async (img) => {
     let imgUrl = null;
-    const uploadServerRoute = "/upload/get-image-url";
+    const uploadServerRoute = "/blog/upload/get-image-url";
 
     try {
         // Step 1: Fetch the pre-signed URL from the backend
