@@ -14,80 +14,87 @@ const UserAuthForm = ({type}) => {
     let {userAuth: {access_token}, setUserAuth} = useContext(UserContext);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+
     console.log(access_token);
 
     // Function to make Requests to the Backend Server
-    const userAuthPostServerConnection = (serverRoute, currentFormData) => {
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, currentFormData)
-            .then(({ data }) => {
-                storeSession("user", JSON.stringify(data))
-                setUserAuth(data)
-            })
-            .catch(({response}) => {
-                toast.error(response.data.error);
-                throw response.data.error;
-            });
-    }
+    const userAuthPostServerConnection = async (serverRoute, currentFormData) => {
+        let loadingToast = toast.loading("Authenticating..");
+        try {
+            const {data} = await axios.post(
+                import.meta.env.VITE_SERVER_DOMAIN + serverRoute,
+                currentFormData
+            );
+            storeSession("user", JSON.stringify(data));
+            setUserAuth(data);
+            toast.dismiss(loadingToast);
+            toast.success("Welcome");
+        } catch ({response}) {
+            toast.dismiss(loadingToast);
+            toast.error(response.data.error);
+            throw response.data.error;
+        }
+    };
 
-
-
-    const handleSubmit = (e) => {
-        //Prevent null submissions
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         let serverRoute = type === "Login" ? "/auth/signin" : "/auth/signup";
 
-        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
-        let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
+        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
-        // Handle raw form data
         let form = new FormData(formElement);
         let currentFormData = {};
 
-        // Loop through the form data (**Security reasons)
-        for (let [key, value] of form.entries()){
+        for (let [key, value] of form.entries()) {
             currentFormData[key] = value;
         }
-        // Form Data Validation
+
         let {fullname, email, password} = currentFormData;
 
         if (fullname) {
             if (fullname.length < 3) {
-                return toast.error("Fullname must be at least 3 characters long")
+                return toast.error("Fullname must be at least 3 characters long");
             }
         }
         if (!email.length) {
-            return toast.error("Please provide an email")
+            return toast.error("Please provide an email");
         }
         if (!emailRegex.test(email)) {
-            return toast.error("Invalid email")
+            return toast.error("Invalid email");
         }
         if (!passwordRegex.test(password)) {
-            return toast.error("Password should be 6 to 20 characters long with 1 numeric, 1 lowercase, 1 Uppercase letters")
+            return toast.error(
+                "Password should be 6 to 20 characters long with 1 numeric, 1 lowercase, 1 Uppercase letters"
+            );
         }
         console.log(currentFormData);
 
-        userAuthPostServerConnection(serverRoute, currentFormData);
+        await userAuthPostServerConnection(serverRoute, currentFormData);
+    };
 
-    }
-
-    // Google Authentication
     const handleGoogleAuth = async (e) => {
         e.preventDefault();
         setIsGoogleLoading(true);
-        try{
-            await googleAuth().then(user => {
+
+        const loadingToast = toast.loading("Signing in with Google..");
+        try {
+            await googleAuth().then(async (user) => {
                 console.log(user);
-                let serverRoute = '/auth/google-auth';
+                let serverRoute = "/auth/google-auth";
                 let currentFormData = {
-                    access_token: user.accessToken
-                }
-                userAuthPostServerConnection(serverRoute, currentFormData);
-            })
-        } catch (e){
+                    access_token: user.accessToken,
+                };
+                await userAuthPostServerConnection(serverRoute, currentFormData);
+            });
+        } catch (e) {
+            toast.dismiss(loadingToast);
             setIsGoogleLoading(false);
-            toast.error('Google Authentication Error!')
+            toast.error("Google Authentication Error!");
             return console.log(e);
+        } finally {
+            setIsGoogleLoading(false);
         }
     }
 
@@ -139,10 +146,7 @@ const UserAuthForm = ({type}) => {
                         <button className="btn-dark flex items-center justify-center gap-4 w-[70%] center" onClick={handleGoogleAuth} disabled={isGoogleLoading}>
                             <img src={googleIcon} className="w-5" alt="google icon"/>
                             {isGoogleLoading ? (
-                                <>
-                                    Loading
-                                    <span className="spinner"></span>
-                                </>
+                                "Loading"
                             ) : (
                                 "Continue with Google"
                             )}
