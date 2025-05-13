@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt';
 import {formatDataToSend, generateUsername} from "../middlewares/userAuth.js";
-import User from "../models/User.js";
+import { models } from '../config/database.js';
 import {getAuth} from "firebase-admin/auth";
 
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
+
+const {User} = models;
 
 /* User Registration Function */
 export const register = async (req, res) => {
