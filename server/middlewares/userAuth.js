@@ -19,6 +19,7 @@ export const formatDataToSend = (user) => {
     const access_token = jwt.sign({id: user.id}, process.env.SECRET_ACCESS_KEY)
     return {
         access_token,
+        id: user.id,
         fullname: user.fullname,
         username: user.username,
         profile_img: user.profile_img
