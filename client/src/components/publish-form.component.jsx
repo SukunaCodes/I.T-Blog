@@ -3,12 +3,21 @@ import {Toaster, toast} from "react-hot-toast";
 import {useContext} from "react";
 import {EditorContext} from "../pages/editor.pages.jsx";
 import Tag from "./tags.component.jsx";
+import axios from "axios";
+import {UserContext} from "../App.jsx";
+import {useNavigate} from "react-router-dom";
 
 const PublishForm = () => {
     const characterLimit = 200;
     const tagLimit = 5;
+    let createBlogRoute = '/blog/create'
 
-    let {blog, blog: {banner, title, tags, description}, setEditorState, setBlog} = useContext(EditorContext);
+    let {blog, blog: {banner, title, tags, description, content}, setEditorState, setBlog} = useContext(EditorContext);
+    let {userAuth: {access_token, id}} = useContext(UserContext);
+    console.log(id);
+
+    let navigate = useNavigate();
+
     const handleCloseEvent = () => {
         setEditorState("editor")
     }
@@ -30,8 +39,6 @@ const PublishForm = () => {
         setBlog({...blog, description: input.value})
     }
 
-
-
     const handleBlogTagsKeyDown = (e) => {
         if(e.keyCode === 13 || e.keyCode ===188){
             e.preventDefault();
@@ -46,6 +53,51 @@ const PublishForm = () => {
             e.target.value = "";
         }
     }
+
+    // Publish Blog Logic
+    const handleBlogPublication = async (e) => {
+        if (e.target.className.includes("disable")) {
+            return;
+        }
+
+        if (!title.length) {
+            return toast.error("Write a blog title before publishing");
+        }
+
+        if (!description.length || description.length > characterLimit) {
+            return toast.error(`A description with at most ${characterLimit} characters is required`);
+        }
+
+        if (!tags.length) {
+            return toast.error("Enter at least 1 tag for SEO ranking");
+        }
+
+        let loadingToast = toast.loading("Publishing your blog");
+        e.target.classList.add("disable");
+
+        let blogDataObj = {title, banner, description, content, tags, authorId: id, draft: false};
+        console.log(id);
+
+        try {
+            await axios.post(import.meta.env.VITE_SERVER_DOMAIN + createBlogRoute, blogDataObj, {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            });
+
+            e.target.classList.remove("disable");
+            toast.dismiss(loadingToast);
+            toast.success("Hooray! 🥳 Your Blog is Live");
+
+            setTimeout(() => {
+                navigate("/");
+            }, 500);
+        } catch ({response}) {
+            e.target.classList.remove("disable");
+            toast.dismiss(loadingToast);
+            return toast.error(response.data.error);
+        }
+    };
 
 
     return (
@@ -76,7 +128,7 @@ const PublishForm = () => {
                         <p className="mt-1 text-dark-grey text-sm text-right">{characterLimit - description.length} characters
                             left.</p>
 
-                        <p className="text-dark-grey mb-2 mt-9">Tags - SEO Optimization for your blogs.</p>
+                        <p className="text-dark-grey mb-2 mt-9">Tags - SEO Ranking for your blogs.</p>
                         <div className="relative input-box pl-2 py-2 pb-4">
                             <input type="text" placeholder="Tags"
                                    className="sticky input-box bg-white top-0 left-0 pl-4 mb-3 focus:bg-white"
@@ -89,7 +141,7 @@ const PublishForm = () => {
                             }
                         </div>
                         <p className="text-dark-grey mt-1 mb-4 text-right">{tagLimit - tags.length} tags remaining.</p>
-                        <button className="btn-dark px-8">Publish</button>
+                        <button className="btn-dark px-8" onClick={handleBlogPublication}>Publish</button>
 
                     </div>
                 </div>
