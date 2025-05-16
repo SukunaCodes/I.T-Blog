@@ -14,23 +14,25 @@ export const createBlog = async (req, res) => {
 
         // Input data validation from frontend
         if (!title.length) {
-            return res.status(403).json({error: "Please provide a blog title before publishing!"})
+            return res.status(403).json({error: "Please provide a blog title!"})
         }
 
-        if (!description.length || description.length > 200) {
-            return res.status(403).json({error: "Blog description is Mandatory!"});
-        }
+        if(!draft){
+            if (!description.length || description.length > 200) {
+                return res.status(403).json({error: "Blog description is Mandatory!"});
+            }
 
-        if (!content.blocks.length) {
-            return res.status(403).json({error: "Blog content is required before publishing!"});
-        }
+            if (!content.blocks.length) {
+                return res.status(403).json({error: "Blog content is required before publishing!"});
+            }
 
-        if (!banner.length) {
-            return res.status(403).json({error: "Please provider a banner!"});
-        }
+            if (!banner.length) {
+                return res.status(403).json({error: "Please provider a banner!"});
+            }
 
-        if (!tags.length || tags.length > 5) {
-            return res.status(403).json({error: "Please provide tags before publishing the blog!"});
+            if (!tags.length || tags.length > 5) {
+                return res.status(403).json({error: "Please provide tags before publishing the blog!"});
+            }
         }
 
         // {tags} to LowerCase()
