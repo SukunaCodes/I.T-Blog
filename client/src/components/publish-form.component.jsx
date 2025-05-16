@@ -27,16 +27,16 @@ const PublishForm = () => {
         setBlog({...blog, title: input.value})
     }
 
+    const handleBlogDescriptionChange = (e) => {
+        let input = e.target;
+        setBlog({...blog, description: input.value})
+    }
+
     const handleBlogDescriptionKeyDown = (e) => {
         // console.log(e);
         if (e.keyCode === 13){
             e.preventDefault();
         }
-    }
-
-    const handleBlogDescriptionChange = (e) => {
-        let input = e.target;
-        setBlog({...blog, description: input.value})
     }
 
     const handleBlogTagsKeyDown = (e) => {
@@ -87,11 +87,11 @@ const PublishForm = () => {
 
             e.target.classList.remove("disable");
             toast.dismiss(loadingToast);
-            toast.success("Hooray! 🥳 Your Blog is Live");
+            toast.success("Hooray! 🥳 Your Blog is Live", {duration: 3000});
 
             setTimeout(() => {
                 navigate("/");
-            }, 500);
+            }, 3000);
         } catch ({response}) {
             e.target.classList.remove("disable");
             toast.dismiss(loadingToast);
