@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import logo from "../assets/logo.png"
 import AnimationWrapper from "../common/page-animation.jsx";
 import defaultBanner from "../assets/blog banner.png";
@@ -8,11 +8,17 @@ import {Toaster, toast} from "react-hot-toast";
 import {EditorContext} from "../pages/editor.pages.jsx";
 import EditorJS from "@editorjs/editorjs";
 import {tools} from "./tools.component.jsx";
+import axios from "axios";
+import {UserContext} from "../App.jsx";
 
 const BlogEditor = () => {
 
 
     const {blog, blog: {title, banner, content, tags, description}, setBlog, textEditor, setTextEditor, setEditorState} = useContext(EditorContext)
+
+    let createBlogRoute = '/blog/create'
+    let {userAuth: {access_token, id}} = useContext(UserContext);
+    let navigate = useNavigate();
 
     //UseEffect to lad EditorJS
     useEffect(() => {
@@ -68,7 +74,7 @@ const BlogEditor = () => {
         setBlog({...blog, banner: defaultBanner})
     }
 
-    // Publish onClick Event
+    // Publish Blog Submit Logic
     const handleBlogPublishEvent = () => {
         if (banner === defaultBanner){
             return toast.error('Please upload a banner!')
@@ -91,6 +97,48 @@ const BlogEditor = () => {
         }
     }
 
+    // saveDraft Logic
+    const handleSaveBlogDraft = async (e) => {
+
+        if (e.target.className.includes("disable")) {
+            return;
+        }
+
+        if (!title.length) {
+            return toast.error("Require title before saving");
+        }
+
+        let loadingToast = toast.loading("Saving your blog");
+        e.target.classList.add("disable");
+
+        if(textEditor.isReady){
+            textEditor.save().then(async content => {
+                let blogDataObj = {title, banner, description, content, tags, authorId: id, draft: true};
+
+                try {
+
+                    await axios.post(import.meta.env.VITE_SERVER_DOMAIN + createBlogRoute, blogDataObj, {
+                        headers: {
+                            'Authorization': `Bearer ${access_token}`
+                        }
+                    });
+
+                    e.target.classList.remove("disable");
+                    toast.dismiss(loadingToast);
+                    toast.success("Draft Saved");
+
+                    setTimeout(() => {
+                        navigate("/");
+                    }, 3000);
+                } catch ({response}) {
+                    e.target.classList.remove("disable");
+                    toast.dismiss(loadingToast);
+                    return toast.error(response.data.error);
+                }
+            })
+        }
+    }
+
 
     return (
 
@@ -105,7 +153,7 @@ const BlogEditor = () => {
                         Publish
                     </button>
 
-                    <button className="btn-light py-2">
+                    <button className="btn-light py-2" onClick={handleSaveBlogDraft}>
                         Save Draft
                     </button>
                 </div>

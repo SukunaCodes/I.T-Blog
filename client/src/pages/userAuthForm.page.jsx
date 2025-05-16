@@ -19,7 +19,7 @@ const UserAuthForm = ({type}) => {
 
     // Function to make Requests to the Backend Server
     const userAuthPostServerConnection = async (serverRoute, currentFormData) => {
-        let loadingToast = toast.loading("Authenticating..");
+        let loadingToast = toast.loading("Authenticating");
         try {
             const {data} = await axios.post(
                 import.meta.env.VITE_SERVER_DOMAIN + serverRoute,
@@ -78,7 +78,6 @@ const UserAuthForm = ({type}) => {
         e.preventDefault();
         setIsGoogleLoading(true);
 
-        const loadingToast = toast.loading("Signing in with Google..");
         try {
             await googleAuth().then(async (user) => {
                 console.log(user);
@@ -89,7 +88,6 @@ const UserAuthForm = ({type}) => {
                 await userAuthPostServerConnection(serverRoute, currentFormData);
             });
         } catch (e) {
-            toast.dismiss(loadingToast);
             setIsGoogleLoading(false);
             toast.error("Google Authentication Error!");
             return console.log(e);
