@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cychann/editorjs-quote": "^1.0.4",
     "@editorjs/code": "^2.9.3",
     "@editorjs/editorjs": "^2.30.8",
     "@editorjs/embed": "^2.7.6",
@@ -20,6 +21,7 @@
     "@editorjs/list": "^2.0.6",
     "@editorjs/marker": "^1.4.0",
     "@editorjs/quote": "^2.7.6",
+    "@editorjs/raw": "^2.5.1",
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.4",
     "axios": "^1.8.4",
