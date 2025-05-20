@@ -7,6 +7,7 @@ import Marker from "@editorjs/marker";
 import InlineCode from "@editorjs/inline-code";
 import Code from "@editorjs/code";
 import Raw from "@editorjs/raw";
+import LinkTool from "@editorjs/link";
 import {uploadImageToAWS} from "../common/aws.jsx";
 
 
@@ -107,4 +108,10 @@ export const tools = {
         class: Code,
     },
     raw: Raw,
+    linkTool: {
+        class: LinkTool,
+      config: {
+          endpoint: `${import.meta.env.VITE_SERVER_DOMAIN}/blog/fetch-link-preview`
+      }
+    },
 }
