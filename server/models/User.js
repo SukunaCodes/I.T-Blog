@@ -1,6 +1,6 @@
 import {DataTypes, Model} from 'sequelize';
-const profile_imgs_name_list = ["Aizen", "Ayanakoji", "Ichigo", "Urahara", "Sukuna", "Dante", "Byakuya", "Rukia"];
-const profile_imgs_collections_list = ["notionists-neutral", "adventurer-villain", "fun-isekai", "overpowered-shounen", "raging-vessel", "dark-manipulator"];
+const profile_imgs_name_list = ["Garfield", "Tinkerbell", "Annie", "Loki", "Cleo", "Angel", "Bob", "Mia", "Coco", "Gracie", "Bear", "Bella", "Abby", "Harley", "Cali", "Leo", "Luna", "Jack", "Felix", "Kiki"];
+const profile_imgs_collections_list = ["notionists-neutral", "adventurer-neutral", "fun-emoji"];
 
 export default (sequelize) => {
     class User extends Model {
