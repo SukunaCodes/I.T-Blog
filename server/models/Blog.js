@@ -8,6 +8,13 @@ export default (sequelize) => {
                 foreignKey: 'userId',
                 as: 'user',
             });
+
+            // Define relationship: Blog has many comments
+            this.hasMany(models.Comment, {
+                foreignKey: 'blogId',
+                as: 'comments',
+                onDelete: 'CASCADE',
+            });
         }
     }
 
@@ -18,6 +25,11 @@ export default (sequelize) => {
                 autoIncrement: true,
                 primaryKey: true,
                 type: DataTypes.INTEGER,
+            },
+            blog_id: {
+              type: DataTypes.STRING,
+              unique: true,
+              allowNull: true,
             },
             title: {
                 type: DataTypes.STRING,
@@ -60,10 +72,6 @@ export default (sequelize) => {
                     total_reads: 0,
                     total_parent_comments: 0,
                 },
-            },
-            comments: {
-                type: DataTypes.JSONB,
-                allowNull: true,
             },
             draft: {
                 type: DataTypes.BOOLEAN,

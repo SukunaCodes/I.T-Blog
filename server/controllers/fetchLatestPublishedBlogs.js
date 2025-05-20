@@ -16,7 +16,7 @@ export const fetchLatestBlogs = async (req, res) => {
                 },
             ],
             order: [['createdAt', 'DESC']],
-            attributes: ['id', 'title', 'description', 'banner', 'activity', 'tags', 'createdAt'],
+            attributes: ['blog_id', 'title', 'description', 'banner', 'activity', 'tags', 'createdAt'],
             limit: blogMaxLimit,
         });
         return res.status(200).json({blogs});
