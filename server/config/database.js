@@ -4,6 +4,7 @@ import 'dotenv/config';
 // Import models
 import UserModel from '../models/User.js';
 import BlogModel from '../models/Blog.js';
+import CommentModel from '../models/Comment.js';
 
 // Initialize Sequelize
 const sequelize = new Sequelize({
@@ -20,6 +21,7 @@ const sequelize = new Sequelize({
 const models = {
   User: UserModel(sequelize),
   Blog: BlogModel(sequelize),
+  Comment: CommentModel(sequelize),
   // Add other models (e.g., Blog) here as needed
 };
 
