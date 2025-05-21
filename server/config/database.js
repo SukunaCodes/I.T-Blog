@@ -1,6 +1,11 @@
 import { Sequelize } from 'sequelize';
 import 'dotenv/config';
 
+// Import models
+import UserModel from '../models/User.js';
+import BlogModel from '../models/Blog.js';
+import CommentModel from '../models/Comment.js';
+
 // Initialize Sequelize
 const sequelize = new Sequelize({
   dialect: 'postgres',
@@ -11,12 +16,13 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD,
 });
 
-/*// Import models
-import UserModel from '../models/User.js';
 
-// Initialize models
+// Initialize models by passing sequelize
 const models = {
   User: UserModel(sequelize),
+  Blog: BlogModel(sequelize),
+  Comment: CommentModel(sequelize),
+  // Add other models (e.g., Blog) here as needed
 };
 
 // Set up associations
@@ -24,8 +30,8 @@ Object.keys(models).forEach((modelName) => {
   if (models[modelName].associate) {
     models[modelName].associate(models);
   }
-});*/
+});
 
 // Export the Sequelize instance and models
 export default sequelize;
-//export { models };
+export { models };
