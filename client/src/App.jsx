@@ -1,6 +1,6 @@
 import Navbar from "./components/navbar.component.jsx"
 import {Route, Routes} from "react-router-dom";
-import UserAuthForm from "./pages/userAuthForm.page.jsx";
+import UserAuthForm from "./pages/userAuthForm.pages.jsx";
 import {createContext, useEffect, useState} from "react";
 import {lookInSession} from "./common/session.jsx";
 import Editor from "./pages/editor.pages.jsx";
