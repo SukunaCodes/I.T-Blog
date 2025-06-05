@@ -5,6 +5,7 @@ import {verifyJWT} from "../middlewares/userAuth.js";
 import urlFetchLinkPreview from "../controllers/fetchURLPreview.js";
 import {fetchLatestBlogs} from "../controllers/fetchLatestPublishedBlogs.js";
 import {fetchTrendingBlogs} from "../controllers/fetchTrendingPublishedBlogs.js";
+import {filterBlogsByTags} from "../controllers/filterBlogsByTags.js";
 
 let router = express.Router();
 
@@ -16,6 +17,7 @@ router.get('/trending', fetchTrendingBlogs);
 
 
 router.post('/create', verifyJWT, createBlog);
+router.post('/search', filterBlogsByTags);
 
 
 export default router;
