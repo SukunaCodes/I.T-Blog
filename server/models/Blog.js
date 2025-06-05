@@ -15,6 +15,13 @@ export default (sequelize) => {
                 as: 'comments',
                 onDelete: 'CASCADE',
             });
+
+            // Define relationship: Blog has may Notifications
+            this.hasMany(models.Notification, {
+                foreignKey: 'blogId',
+                as: 'notifications',
+                onDelete: 'CASCADE',
+            });
         }
     }
 

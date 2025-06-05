@@ -48,7 +48,16 @@ export default (sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references:{
-                    models: 'users',
+                    model: 'blogs',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
+            },
+            blogUserId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'users',
                     key: 'id',
                 },
                 onDelete: 'CASCADE',

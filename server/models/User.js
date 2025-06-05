@@ -1,9 +1,50 @@
 import {DataTypes, Model} from 'sequelize';
-const profile_imgs_name_list = ["Garfield", "Tinkerbell", "Annie", "Loki", "Cleo", "Angel", "Bob", "Mia", "Coco", "Gracie", "Bear", "Bella", "Abby", "Harley", "Cali", "Leo", "Luna", "Jack", "Felix", "Kiki"];
-const profile_imgs_collections_list = ["notionists-neutral", "adventurer-neutral", "fun-emoji"];
+
+const profile_imgs_name_list = [
+    "Neo", "Tinkerbell", "Thor", "Loki", "Dracula", "Angel", "Napoleon", "Mia", "Coco", "Gracie",
+    "Bear", "Bella", "Abby", "Harley", "Cali", "Leo", "Luna", "Jack", "Felix", "Kiki", "Zeus", "Athena", "Apollo", "Hera", "Poseidon", "Vampire", "Wizard", "Elf", "Goblin", "Dragon", "Phoenix", "Mermaid", "Unicorn", "Griffin", "Centaur", "Ninja", "Samurai", "Pirate", "Knight", "Archer", "Star", "Comet", "Galaxy", "Nebula", "Eclipse", "Blaze", "Frost", "Storm", "Thunder", "Shadow", "River", "Ocean", "Sky", "Forest", "Meadow", "Sunny", "Moony", "Spark", "Breeze", "Flame"
+];
+const profile_imgs_collections_list = [
+    "notionists-neutral", "adventurer-neutral", "fun-emoji", "adventurer", "avataaars", "big-ears", "big-ears-neutral", "big-smile", "bottts", "bottts-neutral", "croodles", "croodles-neutral", "identicon", "initials", "lorelei", "lorelei-neutral", "micah", "miniavs", "notionists", "open-peeps", "personas", "pixel-art", "pixel-art-neutral", "shapes", "thumbs"
+];
 
 export default (sequelize) => {
     class User extends Model {
+        static associate(models) {
+            // Define relationship: User has many
+            User.hasMany(models.Blog, {
+                foreignKey: 'userId',
+                as: 'blogs',
+                onDelete: 'CASCADE',
+            });
+            // Define relationship: User has many Comments (as the blog's author)
+            User.hasMany(models.Comment, {
+                foreignKey: 'blogUserId',
+                as: 'authoredBlogComments',
+                onDelete: 'CASCADE',
+            });
+
+            // Define relationship: User has many comments (as the commenter)
+            User.hasMany(models.Comment, {
+                foreignKey: 'commentedBy',
+                as: 'userComments',
+                onDelete: 'CASCADE',
+            });
+
+            // Define relationship: User has many Notifications (as recipient)
+            User.hasMany(models.Notification, {
+                foreignKey: 'notificationForId',
+                as: 'receivedNotifications',
+                onDelete: 'CASCADE',
+            });
+
+            // Define relationship: User has many Notifications (as sender)
+            User.hasMany(models.Notification, {
+                foreignKey: 'userId',
+                as: 'sentNotifications',
+                onDelete: 'CASCADE',
+            });
+        }
     }
 
     User.init(
@@ -107,13 +148,6 @@ export default (sequelize) => {
         }
     );
 
-    // Define associations as a static method
-    User.associate = (models) => {
-        User.hasMany(models.Blog, {
-            foreignKey: 'userId',
-            as: 'blogs',
-        });
-    };
 
     return User;
 };
