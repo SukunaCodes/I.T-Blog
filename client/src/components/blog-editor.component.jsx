@@ -16,11 +16,11 @@ const BlogEditor = () => {
 
     const {blog, blog: {title, banner, content, tags, description}, setBlog, textEditor, setTextEditor, setEditorState} = useContext(EditorContext)
 
-    let createBlogRoute = '/blog/create'
+    let createBlogRoute = '/blog/create';
     let {userAuth: {access_token, id}} = useContext(UserContext);
     let navigate = useNavigate();
 
-    //UseEffect to lad EditorJS
+    //UseEffect to load EditorJS
     useEffect(() => {
         setTextEditor(new EditorJS({
             holder: "textEditor",
