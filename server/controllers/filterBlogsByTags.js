@@ -4,7 +4,7 @@ import {Op} from "sequelize";
 const {Blog, User} = models;
 
 export const filterBlogsByTags = async (req, res) => {
-    let{tag} = req.body;
+    let{tag, page} = req.body;
 
     // Validate Tag
     if(!tag || typeof tag !== 'string'){
@@ -15,7 +15,8 @@ export const filterBlogsByTags = async (req, res) => {
         draft: false,
     };
 
-    let maxLimit = 5;
+    let maxLimit = 2;
+    let skip = (page - 1) * maxLimit;
 
     try{
         const blogs = await Blog.findAll({
@@ -28,6 +29,7 @@ export const filterBlogsByTags = async (req, res) => {
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'title', 'description', 'banner', 'activity', 'tags', 'createdAt'],
             limit: maxLimit,
+            offset: skip,
         })
         return res.status(200).json({blogs});
     } catch (err){

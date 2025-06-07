@@ -59,7 +59,8 @@ export default (sequelize) => {
             },
             tags: {
                 type: DataTypes.ARRAY(DataTypes.STRING),
-                allowNull: true,
+                allowNull: false,
+                defaultValue: [],
             },
             userId: {
                 type: DataTypes.INTEGER,

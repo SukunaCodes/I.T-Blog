@@ -3,7 +3,12 @@ import {models} from "../config/database.js";
 const {Blog, User} = models;
 
 export const fetchLatestBlogs = async (req, res) => {
+
+    let {page} = req.body;
+
     let blogMaxLimit = 5;
+
+    let skip = (page - 1) * blogMaxLimit;
 
     try{
         const blogs = await Blog.findAll({
@@ -18,6 +23,7 @@ export const fetchLatestBlogs = async (req, res) => {
             order: [['createdAt', 'DESC']],
             attributes: ['blog_id', 'title', 'description', 'banner', 'activity', 'tags', 'createdAt'],
             limit: blogMaxLimit,
+            offset: skip,
         });
         return res.status(200).json({blogs});
     } catch (err){
