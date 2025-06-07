@@ -6,6 +6,8 @@ import Loader from "../components/loader.component.jsx";
 import BlogPostCard from "../components/blog-post-card.component.jsx";
 import MinimalTrendingBlogPost from "../components/nobanner-blog-post-component.jsx";
 import NoDataMessage from "../components/nodata.component.jsx";
+import {filterPaginationData} from "../common/filter-pagination-data.jsx";
+import LoadMoreBlogs from "../components/load-more.component.jsx";
 
 const HomePage = () => {
 
@@ -17,12 +19,19 @@ const HomePage = () => {
     let [trendingBlog, setTrendingBlog] = useState(null);
     let [pageState, setPageState] = useState("home");
 
-    let categories = ["programming", "content making", "cybersecurity", "tech", "travel", "finances"];
+    let categories = ["programming", "blockchain", "cybersecurity", "tech", "travel", "anime", "demon"];
 
-    const fetchLatestBlogs = () => {
-        axios.get(import.meta.env.VITE_SERVER_DOMAIN + blogLatestRoute)
-            .then(({data}) => {
-                setLatestBlog(data.blogs);
+    const fetchLatestBlogs = ({page = 1}) => {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + blogLatestRoute, {page})
+            .then(async ({data}) => {
+                let formatedData = await filterPaginationData({
+                    state: latestBlog,
+                    data: data.blogs,
+                    page,
+                    countRoute: "/blog/all-blogs-count"
+                })
+                console.log(formatedData);
+                setLatestBlog(formatedData);
             })
             .catch(err => {
                 console.log(err);
@@ -49,10 +58,17 @@ const HomePage = () => {
         setPageState(category);
     }
 
-    const fetchBlogsByCategory = () => {
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + blogCategoryRoute, {tag: pageState})
-            .then(({data}) => {
-                setLatestBlog(data.blogs);
+    const fetchBlogsByCategory = ({page = 1}) => {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + blogCategoryRoute, {tag: pageState, page})
+            .then(async ({data}) => {
+                let formatedData = await filterPaginationData({
+                    state: latestBlog,
+                    data: data.blogs,
+                    page,
+                    countRoute: "/blog/search-blogs-count",
+                    data_to_send: {tag: pageState}
+                })
+                setLatestBlog(formatedData);
             })
             .catch(err => {
                 console.log(err);
@@ -64,10 +80,10 @@ const HomePage = () => {
         activeButtonTab.current.click();
 
         if(pageState === "home"){
-            fetchLatestBlogs();
+            fetchLatestBlogs({page: 1});
         }
         else {
-            fetchBlogsByCategory();
+            fetchBlogsByCategory({page: 1});
         }
         if(!trendingBlog){
             fetchTrendingBlogs();
@@ -83,27 +99,28 @@ const HomePage = () => {
 
                         <>
                             {
-                                latestBlog === null ?  <Loader/> :
-                                    latestBlog.length ?
-                                        latestBlog.map((blog, i) => {
-                                            return <AnimationWrapper key={i} transition={{duration: 1, delay: i * .1}}>
+                                latestBlog === null || !latestBlog.results ?  ( <Loader/> ) :
+                                    ( latestBlog.results.length ?
+                                        latestBlog.results.map((blog, i) => {
+                                            return (<AnimationWrapper key={i} transition={{duration: 1, delay: i * .1}}>
                                                 <BlogPostCard content={blog} author={blog.user}/>
-                                            </AnimationWrapper>
+                                            </AnimationWrapper>)
                                         }) :
-                                        <NoDataMessage message="No Blogs Published"/>
+                                        <NoDataMessage message="No Blogs Published"/> )
                             }
+                            <LoadMoreBlogs state={latestBlog} fetchDataFun={(pageState === "home" ? fetchLatestBlogs : fetchBlogsByCategory)} />
                         </>
 
                         <>
                             {
-                                trendingBlog === null ? <Loader/> :
-                                    trendingBlog.length ?
+                                trendingBlog === null ? ( <Loader/> ) :
+                                    ( trendingBlog.length ?
                                         trendingBlog.map((blog, i) => {
-                                            return <AnimationWrapper key={i} transition={{duration: 1, delay: i * .1}}>
+                                            return (<AnimationWrapper key={i} transition={{duration: 1, delay: i * .1}}>
                                                 <MinimalTrendingBlogPost content={blog} author={blog.user} index={i}/>
-                                            </AnimationWrapper>
+                                            </AnimationWrapper>)
                                         }) :
-                                        <NoDataMessage message="No Trending Blogs"/>
+                                        <NoDataMessage message="No Trending Blogs"/>)
                             }
                         </>
 
