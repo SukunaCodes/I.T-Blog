@@ -1,13 +1,27 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Katex -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"/>
+
+    <!-- EditorJS core -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.min.js"></script>
+
+    <!-- EditorJS-LaTeX plugin -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/mdgaziur/EditorJS-LaTeX@1.0.5/dist/editorjs-latex.bundle.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/mdgaziur/EditorJS-LaTeX@1.0.5/dist/editorjs-latex.bundle-min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest/dist/bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest/dist/bundle.min.js"></script>
     <title>Introverted Techies Blog</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>
