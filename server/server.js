@@ -7,6 +7,7 @@ import cors from "cors";
 import googleAccountKey from './pern-blog-app-firebase-adminsdk.json' with { type: "json" }; // Guard the json file securely
 import admin from "firebase-admin";
 import blogEditorRoutes from "./routes/blogEditorRoutes.js";
+import userSearchRoute from "./routes/userSearchRoute.js";
 
 
 const server = express();
@@ -31,9 +32,9 @@ server.use(cors());
 async function testDBConnection() {
     try {
         await sequelize.authenticate();
-        console.log('PostgresSQL connection has been established successfully!');
+        console.log('PostgreSQL connection has been established successfully!');
     } catch (e) {
-        console.error('Unable to connect to the PostgresSQL database: ', e);
+        console.error('Unable to connect to the PostgreSQL database: ', e);
         process.exit(1);
     }
 }
@@ -51,6 +52,9 @@ server.listen(PORT, () => {
 
 // User Auth Routes
 server.use('/auth', userAuthRoutes);
+
+// User Search Route
+server.use('/user', userSearchRoute);
 
 // Blog Editor Routes
 server.use('/blog', blogEditorRoutes);
