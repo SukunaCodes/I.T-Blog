@@ -3,17 +3,28 @@ import 'dotenv/config'
 import cookieParser from 'cookie-parser';
 import userAuthRoutes from "./routes/userAuthRoutes.js";
 import sequelize from "./config/database.js";
-
+import cors from "cors";
+import googleAccountKey from './pern-blog-app-firebase-adminsdk.json' with { type: "json" }; // Guard the json file securely
+import admin from "firebase-admin";
+import blogEditorRoutes from "./routes/blogEditorRoutes.js";
+import userSearchRoute from "./routes/userSearchRoute.js";
 
 
 const server = express();
 let PORT = process.env.SERVER_PORT;
+
+// Firebase admin Init
+
+admin.initializeApp({
+    credential: admin.credential.cert(googleAccountKey)
+});
 
 
 // Middleware
 server.use(express.json());
 server.use(express.urlencoded({extended: false}));
 server.use(cookieParser());
+server.use(cors());
 
 
 
@@ -21,9 +32,9 @@ server.use(cookieParser());
 async function testDBConnection() {
     try {
         await sequelize.authenticate();
-        console.log('PostgresSQL connection has been established successfully!');
+        console.log('PostgreSQL connection has been established successfully!');
     } catch (e) {
-        console.error('Unable to connect to the PostgresSQL database: ', e);
+        console.error('Unable to connect to the PostgreSQL database: ', e);
         process.exit(1);
     }
 }
@@ -37,9 +48,15 @@ async function testDBConnection() {
 
 server.listen(PORT, () => {
     console.log("Listening on port -> " + PORT);
-})
+});
 
-// routes
+// User Auth Routes
 server.use('/auth', userAuthRoutes);
+
+// User Search Route
+server.use('/user', userSearchRoute);
+
+// Blog Editor Routes
+server.use('/blog', blogEditorRoutes);
 
 
