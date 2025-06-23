@@ -7,7 +7,7 @@ import cors from "cors";
 import googleAccountKey from './pern-blog-app-firebase-adminsdk.json' with { type: "json" }; // Guard the json file securely
 import admin from "firebase-admin";
 import blogEditorRoutes from "./routes/blogEditorRoutes.js";
-import userSearchRoute from "./routes/userSearchRoute.js";
+import userRoutes from "./routes/userRoutes.js";
 
 
 const server = express();
@@ -54,7 +54,7 @@ server.listen(PORT, () => {
 server.use('/auth', userAuthRoutes);
 
 // User Search Route
-server.use('/user', userSearchRoute);
+server.use('/user', userRoutes);
 
 // Blog Editor Routes
 server.use('/blog', blogEditorRoutes);
