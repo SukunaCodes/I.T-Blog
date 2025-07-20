@@ -4,16 +4,28 @@ import {Op} from "sequelize";
 const {Blog, User} = models;
 
 export const filterBlogsByTags = async (req, res) => {
-    let {tag, query, page} = req.body;
+    let {tag, query, page, user} = req.body;
 
 
     // Validate input
-    if (!(!query && (!tag || typeof tag !== "string"))) {
+    if (!(!query && !tag && !user) || (tag && typeof tag !== "string")) {
         let findQuery = {draft: false};
         if (tag) {
             findQuery.tags = {[Op.contains]: Array.isArray(tag) ? tag : [tag]};
         } else if (query) {
             findQuery.title = {[Op.iLike]: `%${query}%`};
+        }
+        else if (user) {
+            const userId = parseInt(user);
+            if (isNaN(userId)) {
+                return res.status(400).json({ error: "User must be a valid number" });
+            }
+            // Verify user exists
+            const userExists = await User.findOne({ where: { id: userId } });
+            if (!userExists) {
+                return res.status(404).json({ error: "User not found" });
+            }
+            findQuery.userId = userId;
         }
         let maxLimit = 5;
         let skip = (parseInt(page) - 1) * maxLimit || 0;

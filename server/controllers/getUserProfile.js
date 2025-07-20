@@ -11,7 +11,7 @@ export const getUserProfile = async (req, res) => {
                 username: username
             },
             attributes: {
-                exclude: ["id","password", "google_auth", "updatedAt", "blogs"]
+                exclude: ["password", "google_auth", "updatedAt", "blogs"]
             },
         });
         return res.status(200).json(user);
