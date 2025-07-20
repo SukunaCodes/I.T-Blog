@@ -1,0 +1,33 @@
+import {models} from "../config/database.js";
+
+const {Blog, User} = models;
+
+export const fetchLatestBlogs = async (req, res) => {
+
+    let {page} = req.body;
+
+    let blogMaxLimit = 5;
+
+    let skip = (page - 1) * blogMaxLimit;
+
+    try{
+        const blogs = await Blog.findAll({
+            where: {draft: false}, // Filter blogs
+            include: [
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: ['fullname', 'profile_img', 'username']
+                },
+            ],
+            order: [['createdAt', 'DESC']],
+            attributes: ['blog_id', 'title', 'description', 'banner', 'activity', 'tags', 'createdAt'],
+            limit: blogMaxLimit,
+            offset: skip,
+        });
+        return res.status(200).json({blogs});
+    } catch (err){
+        return res.status(500).json({error: err.message});
+    }
+
+}
