@@ -1,11 +1,19 @@
 import axios from "axios";
 
-export const filterPaginationData = async ({create_new_arr = false, state, data, page, countRoute, data_to_send = {}}) => {
+export const filterPaginationData = async ({
+                                               create_new_arr = false,
+                                               state,
+                                               data,
+                                               page,
+                                               countRoute,
+                                               data_to_send = {}
+                                           }) => {
     let obj = {
         results: [],
         page: page || 1,
         totalDocs: 0,
         totalPages: 1,
+        user_id: null, // Add user_id to default structure
     }; // Default object with empty results array
 
     try {
@@ -26,7 +34,8 @@ export const filterPaginationData = async ({create_new_arr = false, state, data,
             }
 
             if (countRoute) {
-                const { data: { totalDocs } = { totalDocs: 0 } } = await axios.post(
+                console.log("Fetching count from:", import.meta.env.VITE_SERVER_DOMAIN + countRoute, "with data:", data_to_send); // Debug log
+                const {data: {totalDocs} = {totalDocs: 0}} = await axios.post(
                     import.meta.env.VITE_SERVER_DOMAIN + countRoute,
                     data_to_send
                 );
@@ -35,21 +44,9 @@ export const filterPaginationData = async ({create_new_arr = false, state, data,
             }
         }
     } catch (err) {
-        console.error("Error in filterPaginationData:", err.message);
-        // Keep default obj with empty results on error
+        console.error("Error in filterPaginationData:", err.message, err.response?.data, "Route:", countRoute, "Data sent:", data_to_send);
+        // Keep default obj with empty results on error, ensuring user_id is null
     }
 
-    /*if(state !== null && !create_new_arr){
-        obj = {...state, results: [...state.results, ...data], page: page}
-    }
-    else {
-        await axios.post(import.meta.env.VITE_SERVER_DOMAIN + countRoute, data_to_send)
-            .then(({data: {totalDocs}}) => {
-                obj = {results: data, page: 1, totalDocs}
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }*/
-    return obj;
-}
+    return obj; // Ensure obj is always returned
+};
